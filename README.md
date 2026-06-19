@@ -1,56 +1,116 @@
-# Welcome to your Expo app 👋
+# Habit Tracker
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A React Native (Expo) learning project — Habit Tracker app.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Habit list with today's check-in status (unchecked first)
+- Add habits with name & emoji
+- Tap to toggle daily check-in
+- Detail page with check-in statistics bar chart
+- Settings page with Chinese/English language switch
+- Local data persistence via SQLite
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+- **Framework**: Expo SDK 56 + Expo Router (file-based routing)
+- **Storage**: expo-sqlite
+- **i18n**: expo-localization + custom React Context
+- **Target Platform**: Android (primary)
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Getting Started
 
 ```bash
-npm run reset-project
+bun install
+bun start           # Start Expo dev server
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Press `a` in the terminal to open on a connected Android device/emulator, or run:
 
-### Other setup steps
+```bash
+bun run android     # equivalent: expo start --android
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Android Studio Integration
 
-## Learn more
+### 1. Prerequisites
 
-To learn more about developing your project with Expo, look at the following resources:
+- JDK 17 (recommended: `microsoft-openjdk17` on Windows, `zulu@17` on macOS)
+- Android Studio with **Android 16 (Baklava) SDK Platform 36** installed
+- `ANDROID_HOME` environment variable set
+  - Windows default: `%LOCALAPPDATA%\Android\Sdk`
+  - macOS default: `~/Library/Android/sdk`
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### 2. Generate native project
 
-## Join the community
+This project uses **Continuous Native Generation (CNG)** — no `android/` directory by default. Generate it when needed:
 
-Join our community of developers creating universal apps.
+```bash
+npx expo prebuild --platform android
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+This creates `android/` with the full native Android project.
+
+### 3. Open in Android Studio
+
+- Launch Android Studio → **Open an existing project** → select the `android/` directory
+- Wait for Gradle sync to complete
+- Use Android Studio for:
+  - Native debugging (breakpoints in Java/Kotlin code)
+  - Device/emulator management
+  - APK/AAB generation
+
+### 4. Development build (faster feedback)
+
+After prebuild, you can also build and run directly from CLI:
+
+```bash
+npx expo run:android
+```
+
+This compiles a development build and installs it on your device/emulator.
+
+> **Note**: During development, prefer `bun start` + `bun run android` for hot-reload. Use Android Studio only when you need native debugging or to generate a production build.
+
+### 5. Build APK / AAB
+
+**Without EAS (via Android Studio):**
+1. `npx expo prebuild --clean` (regenerate native project)
+2. Open `android/` in Android Studio
+3. **Build → Build Bundle(s) / APK(s) → Build APK(s)**
+4. APK will be at `android/app/build/outputs/apk/debug/` or `release/`
+
+**With EAS Build (cloud):**
+```bash
+npm install -g eas-cli
+eas login
+eas build --platform android --profile production
+```
+
+## Project Structure
+
+```
+src/
+├── app/                 # Expo Router pages
+│   ├── _layout.tsx      # Root layout (Stack + providers)
+│   ├── (tabs)/          # Tab layout
+│   ├── habit/new.tsx    # Add habit (modal)
+│   └── habit/[id].tsx   # Detail page
+├── contexts/            # React Contexts (database, i18n)
+├── hooks/               # Custom hooks (use-habits, use-check-ins)
+├── components/          # Reusable UI
+├── locales/             # Translation files (en, zh)
+├── db/                  # SQLite schema
+└── lib/                 # Utilities (date)
+```
+
+## Configuration
+
+**`metro.config.js`** — adds `.wasm` support for expo-sqlite web compatibility.
+
+## Troubleshooting
+
+- **Clear Metro cache**: `bun start --clear`
+- **Regenerate native project**: `npx expo prebuild --clean`
+- **Check JDK version**: `java -version` (must be 17)
+- **Check ANDROID_HOME**: `echo %ANDROID_HOME%` (Windows) / `echo $ANDROID_HOME` (macOS/Linux)
