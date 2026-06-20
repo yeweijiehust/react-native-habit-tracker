@@ -17,6 +17,7 @@ export const zh = {
   about: '关于',
   habitTracker: '习惯追踪',
   delete: '删除',
+  deleteConfirm: '确定要删除这个习惯吗？此操作不可撤销。',
   settingsDescription: '自定义应用体验',
   days: '天',
   checkIn: '打卡',

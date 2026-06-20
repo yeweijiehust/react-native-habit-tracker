@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -24,38 +24,43 @@ export function StatsChart({ data }: Props) {
 
   return (
     <ThemedView style={styles.container}>
-      {data.map((item) => {
-        const height = (item.count / maxCount) * 100;
-        return (
-          <View key={item.date} style={styles.barWrapper}>
-            <ThemedText style={styles.count}>{item.count}</ThemedText>
-            <View
-              style={[
-                styles.bar,
-                {
-                  height: Math.max(height, 4),
-                  backgroundColor: theme.text,
-                },
-              ]}
-            />
-            <ThemedText style={styles.date}>
-              {item.date.slice(5)}
-            </ThemedText>
-          </View>
-        );
-      })}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={[styles.chartInner, { minWidth: data.length * 44 }]}>
+          {data.map((item) => {
+            const height = (item.count / maxCount) * 100;
+            return (
+              <View key={item.date} style={styles.barWrapper}>
+                <ThemedText style={styles.count}>{item.count}</ThemedText>
+                <View
+                  style={[
+                    styles.bar,
+                    {
+                      height: Math.max(height, 4),
+                      backgroundColor: theme.text,
+                    },
+                  ]}
+                />
+                <ThemedText style={styles.date}>
+                  {item.date.slice(5)}
+                </ThemedText>
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
     </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    paddingVertical: Spacing.three,
+    minHeight: 160,
+  },
+  chartInner: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     gap: Spacing.two,
-    paddingVertical: Spacing.three,
-    minHeight: 160,
-    overflow: 'scroll',
   },
   barWrapper: {
     alignItems: 'center',

@@ -17,6 +17,7 @@ export const en = {
   about: 'About',
   habitTracker: 'Habit Tracker',
   delete: 'Delete',
+  deleteConfirm: 'Are you sure you want to delete this habit? This cannot be undone.',
   settingsDescription: 'Customize your app experience',
   days: 'days',
   checkIn: 'Check in',

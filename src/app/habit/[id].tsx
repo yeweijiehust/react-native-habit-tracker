@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -35,9 +35,18 @@ export default function HabitDetailScreen() {
     load();
   }, [load]);
 
-  const handleDelete = async () => {
-    await deleteHabit(habitId);
-    router.back();
+  const handleDelete = () => {
+    Alert.alert(t.delete, t.deleteConfirm, [
+      { text: t.cancel, style: 'cancel' },
+      {
+        text: t.delete,
+        style: 'destructive',
+        onPress: async () => {
+          await deleteHabit(habitId);
+          router.back();
+        },
+      },
+    ]);
   };
 
   if (!habit) return null;
